@@ -1,0 +1,32 @@
+# FTP Bridge - Python/FastAPI Dependencies
+
+# Основные компоненты
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0                   # v2 для BaseSettings
+pydantic-settings==2.1.0          # Отдельный пакет для settings в v2
+
+# Безопасность и rate limiting
+python-multipart==0.0.6
+slowapi==0.1.9                    # Rate limiting для FastAPI
+
+# FTP/SFTP поддержка
+paramiko==3.4.0                   # SFTP поддержка
+
+# Дополнительные утилиты
+python-dotenv==1.0.0              # Для работы с .env файлами
+
+# HTTP клиенты и тестирование
+requests==2.31.0                  # Для простых HTTP запросов
+httpx==0.25.2                     # Для асинхронного тестирования API
+pytest==7.4.3                     # Фреймворк тестирования
+pytest-asyncio==0.21.1            # Поддержка async/await в pytest
+
+# Производственные серверы
+gunicorn==21.2.0                  # WSGI/ASGI сервер для продакшена
+
+# Мониторинг и метрики (опционально)
+# prometheus-client==0.19.0       # Метрики Prometheus
+
+# Убрано:
+# structlog - не используется в текущей реализации 

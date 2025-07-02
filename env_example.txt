@@ -1,0 +1,154 @@
+# FTP Bridge - Example environment variable file
+# CRITICAL: Copy this file as .env and set up security tokens!
+
+# 🚨 SECURITY: TOKENS ACCESS 🚨
+# =======================================
+# REQUIRED: Set up at least one token for system operation!
+# Generate new token: python -c "import secrets; print(secrets.token_hex(16))"
+
+# Format: FTP_BRIDGE_TOKEN_NAME_CLIENT=token_minimum_32_characters
+FTP_BRIDGE_TOKEN_POWERBI=aabbccdd11223344556677889900aabbccddee
+FTP_BRIDGE_TOKEN_EXCEL=1122334455667788990011223344556677889900
+FTP_BRIDGE_TOKEN_ANALYTICS=9988776655443322110099887766554433221100
+
+# ====== MAIN SETTINGS ======
+
+# Host for server binding (0.0.0.0 for all interfaces)
+FTP_BRIDGE_HOST=0.0.0.0
+
+# Port for HTTP server
+FTP_BRIDGE_PORT=8000
+
+# Debug mode (true/false) - DO NOT use in production!
+FTP_BRIDGE_DEBUG=false
+
+# ====== CORS SETTINGS (SECURITY) ======
+
+# Allowed domains for CORS (comma separated)
+# In production, REQUIRED to specify specific domains!
+FTP_BRIDGE_CORS_ORIGINS=https://app.powerbi.com,https://your-domain.com
+
+# Allow credentials in CORS requests
+FTP_BRIDGE_CORS_CREDENTIALS=true
+
+# Allowed HTTP methods
+FTP_BRIDGE_CORS_METHODS=GET
+
+# ====== FTP/SFTP SETTINGS ======
+
+# Default protocol (ftp, ftps, sftp) - RECOMMENDED ftps
+FTP_BRIDGE_DEFAULT_PROTOCOL=ftps
+
+# Use FTPS (encrypted FTP) instead of regular FTP
+FTP_BRIDGE_USE_FTPS=true
+
+# FTP/SFTP connection timeout in seconds
+FTP_BRIDGE_FTP_TIMEOUT=30
+
+# FTP server port (usually 21 for FTP, 990 for FTPS)
+FTP_BRIDGE_FTP_PORT=21
+
+# SFTP server port (usually 22)
+FTP_BRIDGE_SFTP_PORT=22
+
+# Path to file known_hosts for checking SFTP keys (optional)
+# Example: /home/user/.ssh/known_hosts or ./known_hosts
+FTP_BRIDGE_KNOWN_HOSTS_PATH=
+
+# Degradation mode - disables FTP functions on configuration errors
+FTP_BRIDGE_DEGRADED_MODE=false
+
+# ====== RATE LIMITING (ATTACK PROTECTION) ======
+
+# Enable rate limiting
+FTP_BRIDGE_RATE_LIMIT_ENABLED=true
+
+# Maximum number of requests in time window
+FTP_BRIDGE_RATE_LIMIT_REQUESTS=100
+
+# Time window for rate limiting in seconds (3600 = 1 hour)
+FTP_BRIDGE_RATE_LIMIT_WINDOW=3600
+
+# ====== FILES AND STREAMING ======
+
+# Directory for temporary files (relative to project or absolute path)
+FTP_BRIDGE_TEMP_DIR=./temp
+
+# Maximum file size in bytes (1073741824 = 1GB)
+FTP_BRIDGE_MAX_FILE_SIZE=1073741824
+
+# Chunk size for streaming in bytes (8192 = 8KB)
+FTP_BRIDGE_CHUNK_SIZE=8192
+
+# Old files cleanup interval in seconds (3600 = 1 hour)
+FTP_BRIDGE_CLEANUP_INTERVAL=3600
+
+# Allowed file extensions (comma separated)
+FTP_BRIDGE_ALLOWED_EXTENSIONS=.txt,.csv,.xlsx,.xls,.pdf,.zip,.json,.xml,.tsv,.dat,.log
+
+# ====== LOGGING WITH ROTATION ======
+
+# Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+FTP_BRIDGE_LOG_LEVEL=INFO
+
+# Log file
+FTP_BRIDGE_LOG_FILE=ftp_bridge.log
+
+# Enable log rotation (recommended)
+FTP_BRIDGE_LOG_ROTATION=true
+
+# Maximum log file size in bytes (10485760 = 10MB)
+FTP_BRIDGE_LOG_MAX_SIZE=10485760
+
+# Number of log file backups
+FTP_BRIDGE_LOG_BACKUP_COUNT=5
+
+# ====== DOCKER SETTINGS ======
+# These variables are automatically used in Docker
+
+# External port for Docker
+EXTERNAL_PORT=8000
+
+# Container name
+CONTAINER_NAME=ftp-bridge
+
+# ====== EXAMPLES FOR DIFFERENT ENVIRONMENTS ======
+
+# === DEVELOPMENT ===
+# FTP_BRIDGE_DEBUG=true
+# FTP_BRIDGE_LOG_LEVEL=DEBUG
+# FTP_BRIDGE_HOST=127.0.0.1
+# FTP_BRIDGE_CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+# FTP_BRIDGE_RATE_LIMIT_ENABLED=false
+
+# === TESTING ===
+# FTP_BRIDGE_DEBUG=false
+# FTP_BRIDGE_LOG_LEVEL=INFO
+# FTP_BRIDGE_MAX_FILE_SIZE=104857600  # 100MB for tests
+# FTP_BRIDGE_RATE_LIMIT_REQUESTS=500
+
+# === PRODUCTION ===
+# FTP_BRIDGE_DEBUG=false
+# FTP_BRIDGE_LOG_LEVEL=WARNING
+# FTP_BRIDGE_HOST=0.0.0.0
+# FTP_BRIDGE_USE_FTPS=true
+# FTP_BRIDGE_DEFAULT_PROTOCOL=ftps
+# FTP_BRIDGE_MAX_FILE_SIZE=5368709120  # 5GB for production
+# FTP_BRIDGE_CORS_ORIGINS=https://app.powerbi.com,https://your-company.com
+# FTP_BRIDGE_RATE_LIMIT_REQUESTS=50
+
+# ====== SECURITY WARNINGS ======
+# 
+# 🚨 CRITICAL:
+# - NEVER commit the .env file with tokens to Git!
+# - Use tokens at least 32 characters long
+# - In production, restrict CORS to specific domains
+# - Enable FTPS or SFTP for encrypted connections
+# - Regularly rotate access tokens
+# 
+# 💡 RECOMMENDATIONS:
+# - Use Docker Secrets in production
+# - Set up log monitoring
+# - Enable rate limiting for attack protection
+# - Limit maximum file size
+# - Set up automatic temp file cleanup 

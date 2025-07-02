@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  ftp-bridge:
+    build: .
+    container_name: ftp-bridge
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Основные настройки
+      - FTP_BRIDGE_HOST=0.0.0.0
+      - FTP_BRIDGE_PORT=8000
+      - FTP_BRIDGE_DEBUG=false
+      
+      # FTP настройки
+      - FTP_BRIDGE_USE_FTPS=false
+      - FTP_BRIDGE_FTP_TIMEOUT=30
+      
+      # Настройки файлов
+      - FTP_BRIDGE_TEMP_DIR=./temp
+      - FTP_BRIDGE_MAX_FILE_SIZE=1073741824  # 1GB
+      - FTP_BRIDGE_CHUNK_SIZE=8192
+      
+      # Логирование
+      - FTP_BRIDGE_LOG_LEVEL=INFO
+      - FTP_BRIDGE_LOG_FILE=./logs/ftp_bridge.log
+    
+    volumes:
+      # Персистентные логи
+      - ./logs:/app/logs
+      # Временные файлы (опционально можно вынести наружу)
+      - ./temp:/app/temp
+    
+    # Лимиты ресурсов (настройте под свои нужды)
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Сетевые настройки
+    networks:
+      - ftp-bridge-network
+
+  # Nginx reverse proxy (опционально для HTTPS)
+  nginx:
+    image: nginx:alpine
+    container_name: ftp-bridge-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Добавьте SSL сертификаты сюда
+      # - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - ftp-bridge
+    networks:
+      - ftp-bridge-network
+    profiles:
+      - with-nginx  # Запускается только с профилем: docker-compose --profile with-nginx up
+
+networks:
+  ftp-bridge-network:
+    driver: bridge
+
+volumes:
+  ftp-bridge-logs:
+  ftp-bridge-temp: 
