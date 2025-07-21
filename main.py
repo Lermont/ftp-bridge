@@ -151,7 +151,8 @@ def validate_required_params(
     host: str = Query(..., description="FTP/SFTP сервер", example="ftp.example.com"),
     user: str = Query(..., description="Имя пользователя", example="username"),
     password: str = Query(..., description="Пароль", example="password"),
-    path: str = Query(..., description="Путь к файлу на сервере", example="/reports/data.xlsx"),
+    path: str = Query(..., description="Путь к каталогу или файлу на сервере", example="/reports/"),
+    file: Optional[str] = Query(None, description="Имя файла, если передается отдельно", example="data.xlsx"),
     protocol: str = Query(default="auto", description="Протокол: auto, ftp, ftps, sftp", example="auto")
 ):
     """Проверка и валидация обязательных параметров"""
@@ -163,11 +164,19 @@ def validate_required_params(
             detail="Сервис запущен в режиме деградации - FTP функции недоступны"
         )
     
+    # Комбинация пути и файла, если файл передан отдельно
+    combined_path = path
+    if file:
+        # Гарантируем корректное соединение пути и имени файла
+        if not combined_path.endswith('/'):
+            combined_path += '/'
+        combined_path += file
+
     # Санитация пути - защита от path traversal
     try:
-        sanitized_path = sanitize_path(path)
+        sanitized_path = sanitize_path(combined_path)
     except ValueError as e:
-        logger.warning(f"Отклонен небезопасный путь: {path} - {e}")
+        logger.warning(f"Отклонен небезопасный путь: {combined_path} - {e}")
         raise HTTPException(status_code=400, detail=f"Недопустимый путь: {e}")
     
     # Извлечение имени файла из пути
